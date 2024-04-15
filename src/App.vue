@@ -1,28 +1,27 @@
 <script>
-import {} from "@/scripts/WorkWithCookies.js"
+import { RouterView } from 'vue-router'
+import {
+	getCookie
+} from '@/scripts/WorkWithCookies.js'
+import router from '@/router/router.js'
 
 export default {
-	data() {},
 	mounted() {
 		this.$nextTick(function () {
-			// специальные символы (пробелы), требуется кодирование
-			let name = 'my name'
-			let value = 'John Smith'
-
-			// кодирует в my%20name=John%20Smith
-			document.cookie =
-				encodeURIComponent(name) + '=' + encodeURIComponent(value)
+			if (getCookie('jwt') == undefined) {
+				router.replace({ path: '/registration' })
+			}
 		})
-	},
-	methods: {
-		
 	},
 }
 </script>
 
 <template>
-	<div>привет</div>
+	<div class="app">
+		<RouterView />
+	</div>
 </template>
 
-<style scoped></style>
-@/scripts/WorkWithCookies
+<style scoped>
+
+</style>
