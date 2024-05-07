@@ -1,8 +1,6 @@
 <script>
 import { RouterView } from 'vue-router'
-import {
-	getCookie
-} from '@/scripts/WorkWithCookies.js'
+import { getCookie } from '@/scripts/WorkWithCookies.js'
 import router from '@/router/router.js'
 
 export default {
@@ -22,6 +20,4 @@ export default {
 	</div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
