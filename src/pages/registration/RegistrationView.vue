@@ -23,7 +23,8 @@ export default {
 						password: this.password,
 					}),
 				}) // Замените URL на ваш адрес сервера
-				const result = await response.json()
+				console.log('Полученные данные:', response)
+				const data = await response.json()
 				// Обработка пришедших данных
 				console.log('Полученные данные:', data)
 				if (data.error === undefined) {
@@ -34,7 +35,7 @@ export default {
 					alert(this.error)
 				}
 			} catch (error) {
-				console.error('Error: ' + error)
+				console.log(error)
 			}
 		},
 	},
