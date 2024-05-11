@@ -1,5 +1,5 @@
 <script>
-import { deleteCookie } from '@/scripts/WorkWithCookies.js'
+import { deleteCookie, getCookie } from '@/scripts/WorkWithCookies.js'
 import AdminPanel from '@/components/AdminPanel.vue'
 
 export default {
@@ -50,7 +50,16 @@ export default {
 		AdminPanel,
 	},
 	created: function () {
-		fetch('http://localhost:8082') // Замените URL на ваш адрес сервера
+		fetch('http://localhost:8082/chat', {
+			method: 'GET', // *GET, POST, PUT, DELETE, etc.
+			mode: 'no-cors', // no-cors, *cors, same-origin
+			cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+			credentials: 'same-origin', // include, *same-origin, omit
+			headers: {
+				'Content-Type': 'application/json',
+				// 'Content-Type': 'application/x-www-form-urlencoded',
+			},
+		}) // Замените URL на ваш адрес сервера
 			.then(response => {
 				if (!response.ok) {
 					// Проверяем, успешно ли выполнен запрос
@@ -61,7 +70,7 @@ export default {
 			.then(data => {
 				// Обработка пришедших данных
 				console.log('Полученные данные:', data)
-				// Дальнейшая обработка данных...
+				this.userData = data
 			})
 			.catch(error => {
 				// Обработка ошибки
@@ -69,7 +78,9 @@ export default {
 				// Дополнительные действия при ошибке...
 			})
 		console.log('Starting connection')
-		this.chatConnection = new WebSocket('ws://localhost:8082/chat')
+		this.chatConnection = new WebSocket(
+			`ws://localhost:8082/chat?${getCookie('jwt')}`
+		)
 
 		this.chatConnection.onopen = function (event) {
 			console.log(event)
