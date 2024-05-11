@@ -5,368 +5,70 @@ import AdminPanel from '@/components/AdminPanel.vue'
 export default {
 	data() {
 		return {
-			userData: {
-				username: 'Sasha',
-				role: 'admin',
-				adminData: {
-					users: [
-						{
-							name: 'Sasha',
-							channels: [{ title: 'Java for Kids' }, { title: 'gg wp ' }],
-						},
-						{
-							name: 'Gosha',
-							channels: [
-								{ title: 'Javascript' },
-								{ title: 'THE WORLD' },
-								{ title: 'THE WORLD' },
-								{ title: 'THE WORLD' },
-								{ title: 'THE WORLD' },
-								{ title: 'THE WORLD' },
-							],
-						},
-					],
-					allChannels: [
-						{
-							id: 0,
-							title: 'Java for Kids',
-							messages: [
-								{ sender: 'Gosha', message: 'привет' },
-								{ sender: 'Sasha', message: 'Ну здарова' },
-							],
-						},
-						{ id: 1, title: 'Java for People' },
-						{ id: 2, title: 'Java not for Kids' },
-					],
-				},
-				userChannels: [
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for PEOPLE',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 2,
-						title:
-							'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 3,
-						title: 'Java for not Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 4,
-						title: 'GG WP',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for not Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 0,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-					{
-						id: 1,
-						title: 'Java for Kids',
-						messages: [
-							{ sender: 'Gosha', message: 'привет' },
-							{ sender: 'Sasha', message: 'Ну здарова' },
-						],
-					},
-				],
-			},
+			userData: {},
 			chatIsOpen: false,
-			currentChatIndex: 0,
+			currentChannelId: 0,
 			newMessage: '',
 			active: false,
+			chatConnection: null,
+			adminConnection: null,
 		}
 	},
 	methods: {
+		sendMessage() {
+			if (this.newMessage === '') {
+				return
+			}
+			console.log(this.chatConnection)
+			this.chatConnection.send({
+				text: newMessage,
+				ChannelId: currentChannelId,
+				senderId: getCookie('jwt'),
+			})
+			this.newMessage = ''
+		},
 		deleteJWT() {
 			deleteCookie('jwt')
 		},
 		openChannel(id) {
 			this.chatIsOpen = true
-			this.currentChatIndex = id
+			this.currentChannelId = id
 		},
-		dispatchMessage() {
-			if (this.newMessage === '') {
-				return
-			}
-			this.userData.userChannels[this.currentChatIndex].messages.push({
-				sender: 'Sasha',
-				message: this.newMessage,
-			})
-			this.newMessage = ''
+		findChannel(id) {
+			let currentChannelIndex = this.userData.userChannels.findIndex(
+				channel => {
+					if (channel.id === id) {
+						return true
+					} else {
+						return false
+					}
+				}
+			)
+			return currentChannelIndex
 		},
 	},
 	components: {
 		AdminPanel,
+	},
+	created: function () {
+		console.log('Starting connection')
+		this.chatConnection = new WebSocket('wss://echo.websocket.org')
+
+		this.chatConnection.onopen = function (event) {
+			console.log(event)
+			console.log('Successfully connected (chatConnection)')
+		}
+		this.chatConnection.onmessage = function (event) {
+			console.log(event)
+		}
+		this.chatConnection.onclose = function () {
+			console.log(
+				'Сообщений больше не будет, соединение закрылось (chatConnection)'
+			)
+		}
+		this.chatConnection.onerror = function () {
+			console.log('Произошла ошибка (chatConnection)')
+		}
 	},
 }
 </script>
@@ -374,7 +76,7 @@ export default {
 <template>
 	<button
 		class="admin-button"
-		v-if="userData.role === 'admin'"
+		v-if="userData.role === true"
 		@click="this.active = !this.active"
 	>
 		<h3 class="admin-button__text">быть админом</h3>
@@ -393,22 +95,30 @@ export default {
 		<div class="main-container__chat-container">
 			<div v-show="chatIsOpen" class="chat">
 				<h3 class="chat__title">
-					{{ this.userData.userChannels[currentChatIndex].title }}
+					{{ this.userData.userChannels[findChannel(currentChannelId)].title }}
 				</h3>
 				<ul class="chat__messages">
 					<li
 						class="chat__message"
 						v-for="(message, index) in this.userData.userChannels[
-							currentChatIndex
+							findChannel(currentChannelId)
 						].messages"
 						:key="index"
 					>
-					{{ message.sender }}:&nbsp;{{ message.message }}
+						{{ message.sender }}:&nbsp;{{ message.message }}
 					</li>
 				</ul>
 				<div class="chat__dispatch">
-					<input class="chat__input" v-model="newMessage" placeholder="Напишите сообщение..."/>
-					<img src="/send-message.png" class="chat__confirm-button" @click="dispatchMessage()"/>
+					<input
+						class="chat__input"
+						v-model="newMessage"
+						placeholder="Напишите сообщение..."
+					/>
+					<img
+						src="/send-message.png"
+						class="chat__confirm-button"
+						@click="sendMessage()"
+					/>
 				</div>
 			</div>
 		</div>
@@ -448,7 +158,8 @@ export default {
 	-ms-overflow-style: none; /* IE и Edge */
 	scrollbar-width: none; /* Firefox */
 }
-.main-container__channels::-webkit-scrollbar { /* Скрываем scrollbar для Chrome, Safari и Opera */
+.main-container__channels::-webkit-scrollbar {
+	/* Скрываем scrollbar для Chrome, Safari и Opera */
 	display: none;
 }
 .main-container__channel {
@@ -486,9 +197,9 @@ export default {
 	padding: 12px;
 	border-bottom: 2px #efefef solid;
 	white-space: nowrap; /* Отключаем автоматический перенос текста */
-    overflow: hidden; /* Скрываем часть текста, если он не помещается */
-    text-overflow: ellipsis; /* Добавляем многоточие для обрезанного текста */
-    min-width: 0; /* Разрешаем сжатие элемента */
+	overflow: hidden; /* Скрываем часть текста, если он не помещается */
+	text-overflow: ellipsis; /* Добавляем многоточие для обрезанного текста */
+	min-width: 0; /* Разрешаем сжатие элемента */
 }
 
 .chat__messages {
@@ -515,7 +226,7 @@ export default {
 	flex-direction: row;
 	align-items: center;
 	border-top: 2px #efefef solid;
-	padding-right: 4px; 
+	padding-right: 4px;
 }
 .chat__input {
 	height: 100%;
