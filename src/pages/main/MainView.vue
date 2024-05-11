@@ -11,7 +11,6 @@ export default {
 			newMessage: '',
 			active: false,
 			chatConnection: null,
-			adminConnection: null,
 		}
 	},
 	methods: {
@@ -51,8 +50,26 @@ export default {
 		AdminPanel,
 	},
 	created: function () {
+		fetch('http://localhost:8082') // Замените URL на ваш адрес сервера
+			.then(response => {
+				if (!response.ok) {
+					// Проверяем, успешно ли выполнен запрос
+					throw new Error('Network response was not ok') // Если запрос не удался, выбрасываем ошибку
+				}
+				return response.json() // Преобразуем ответ в формат JSON
+			})
+			.then(data => {
+				// Обработка пришедших данных
+				console.log('Полученные данные:', data)
+				// Дальнейшая обработка данных...
+			})
+			.catch(error => {
+				// Обработка ошибки
+				console.error('Произошла ошибка при запросе данных:', error)
+				// Дополнительные действия при ошибке...
+			})
 		console.log('Starting connection')
-		this.chatConnection = new WebSocket('wss://echo.websocket.org')
+		this.chatConnection = new WebSocket('ws://localhost:8082/chat')
 
 		this.chatConnection.onopen = function (event) {
 			console.log(event)
