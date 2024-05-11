@@ -11,40 +11,31 @@ export default {
 		}
 	},
 	methods: {
-		registration() {
-			fetch('http://localhost:8082/registration', {
-				method: 'POST', // *GET, POST, PUT, DELETE, etc.
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					userName: this.userName,
-					password: this.password,
-				}),
-			}) // Замените URL на ваш адрес сервера
-				.then(response => {
-					if (!response.ok) {
-						// Проверяем, успешно ли выполнен запрос
-						throw new Error('Network response was not ok') // Если запрос не удался, выбрасываем ошибку
-					}
-					return response.json() // Преобразуем ответ в формат JSON
-				})
-				.then(data => {
-					// Обработка пришедших данных
-					console.log('Полученные данные:', data)
-					if (data.error === undefined) {
-						setCookie('jwt', data)
-						router.replace({ path: '/' })
-					} else {
-						this.error=data.error
-						alert(this.error)
-					}
-				})
-				.catch(error => {
-					// Обработка ошибки
-					console.error('Произошла ошибка при запросе данных:', error)
-					// Дополнительные действия при ошибке...
-				})
+		async registration() {
+			try {
+				const response = await fetch('http://localhost:8082/registration', {
+					method: 'POST', // *GET, POST, PUT, DELETE, etc.
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						userName: this.userName,
+						password: this.password,
+					}),
+				}) // Замените URL на ваш адрес сервера
+				const result = await response.json()
+				// Обработка пришедших данных
+				console.log('Полученные данные:', data)
+				if (data.error === undefined) {
+					setCookie('jwt', data)
+					router.replace({ path: '/' })
+				} else {
+					this.error = data.error
+					alert(this.error)
+				}
+			} catch (error) {
+				console.error('Error: ' + error)
+			}
 		},
 	},
 }
