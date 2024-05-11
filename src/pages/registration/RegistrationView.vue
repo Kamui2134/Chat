@@ -34,6 +34,7 @@ export default {
 					console.log('Полученные данные:', data)
 					if (data.error === undefined) {
 						setCookie('jwt', data)
+						router.replace({ path: '/' })
 					} else {
 						this.error=data.error
 						alert(this.error)
@@ -44,7 +45,6 @@ export default {
 					console.error('Произошла ошибка при запросе данных:', error)
 					// Дополнительные действия при ошибке...
 				})
-			router.replace({ path: '/' })
 		},
 	},
 }
