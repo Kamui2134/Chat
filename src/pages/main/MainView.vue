@@ -11,6 +11,8 @@ export default {
 			newMessage: '',
 			active: false,
 			chatConnection: null,
+			userDataLoaded: false,
+			userId: ''
 		}
 	},
 	methods: {
@@ -20,9 +22,9 @@ export default {
 			}
 			console.log(this.chatConnection)
 			this.chatConnection.send({
-				text: newMessage,
-				ChannelId: currentChannelId,
-				senderId: getCookie('jwt'),
+				text: this.newMessage,
+				ChannelId: this.currentChannelId,
+				senderId: this.userId
 			})
 			this.newMessage = ''
 		},
@@ -36,72 +38,83 @@ export default {
 		findChannel(id) {
 			for (var i = 0; i < this.userData.userChannels.length; i++) {
 				if (this.userData.userChannels[i].id === id) {
-					return i; // Возвращаем индекс элемента, если его id равен заданному id
+					return i // Возвращаем индекс элемента, если его id равен заданному id
 				}
 			}
 		},
-		components: {
-			AdminPanel,
-		},
-		created() {
-			fetch('http://localhost:8082/chat', {
-				method: 'GET', // *GET, POST, PUT, DELETE, etc.
-				headers: {
-					'Content-Type': 'application/json',
-					// 'Content-Type': 'application/x-www-form-urlencoded',
-				},
-			}).then(response => {
-				console.log(response)
+	},
+	components: {
+		AdminPanel,
+	},
+	created: function () {
+		console.log('gg wp')
+		this.userId = getCookie('jwt')
+		fetch('http://192.168.137.1:8082/chat', {
+			method: 'POST', // *GET, POST, PUT, DELETE, etc.
+			headers: {
+				'Content-Type': 'application/json',
+				// 'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: JSON.stringify({
+				userId: this.userId
+			})
+		})
+			.then(response => {
 				if (!response.ok) {
 					// Проверяем, успешно ли выполнен запрос
 					throw new Error('Network response was not ok') // Если запрос не удался, выбрасываем ошибку
 				}
 				return response.json() // Преобразуем ответ в формат JSON
 			})
-				.then(data => {
-					// Обработка пришедших данных
-					console.log('Полученные данные:', data)
-					this.userData = data
-				})
-				.catch(error => {
-					// Обработка ошибки
-					console.error('Произошла ошибка при запросе данных:', error)
-					// Дополнительные действия при ошибке...
-				})
-			console.log('Starting connection')
-			const userId = getCookie('jwt')
-			this.chatConnection = new WebSocket(
-				`ws://localhost:8082/chat?userId=${userId}`
-			)
+			.then(data => {
+				// Обработка пришедших данных
+				console.log('Полученные данные:', data)
+				this.userData = data
+				this.userDataLoaded = true
+			})
+			.catch(error => {
+				// Обработка ошибки
+				console.log('Произошла ошибка при запросе данных:', error)
+				// Дополнительные действия при ошибке...
+			})
+		console.log('Starting connection')
+		this.chatConnection = new WebSocket(`ws://192.168.137.1:8082/chat?userId=${this.userId}`)
 
-			this.chatConnection.onopen = function (event) {
-				console.log(event)
-				console.log('Successfully connected (chatConnection)')
-			}
-			this.chatConnection.onmessage = function (event) {
-				console.log(event)
-			}
-			this.chatConnection.onclose = function () {
-				console.log(
-					'Сообщений больше не будет, соединение закрылось (chatConnection)'
-				)
-			}
-			this.chatConnection.onerror = function () {
-				console.log('Произошла ошибка (chatConnection)')
-			}
-		},
-	}
+		this.chatConnection.onopen = function (event) {
+			console.log(event)
+			console.log('Successfully connected (chatConnection)')
+		}
+		this.chatConnection.onmessage = function (event) {
+			console.log(event)
+		}
+		this.chatConnection.onclose = function () {
+			console.log(
+				'Сообщений больше не будет, соединение закрылось (chatConnection)'
+			)
+		}
+		this.chatConnection.onerror = function () {
+			console.log('Произошла ошибка (chatConnection)')
+		}
+	},
 }
 </script>
 
 <template>
-	<button class="admin-button" v-if="userData.role === true" @click="this.active = !this.active">
+	<button
+		class="admin-button"
+		v-if="userData.isAdmin === true"
+		@click="this.active = !this.active"
+	>
 		<h3 class="admin-button__text">быть админом</h3>
 	</button>
-	<div class="main-container">
+	<div class="main-container" v-if="userDataLoaded">
 		<ul class="main-container__channels">
-			<li class="main-container__channel" v-for="channel in this.userData.userChannels" :key="channel.id"
-				@click="openChannel(channel.id)">
+			<li
+				class="main-container__channel"
+				v-for="channel in this.userData.userChannels"
+				:key="channel.id"
+				@click="openChannel(channel.id)"
+			>
 				{{ channel.title }}
 			</li>
 		</ul>
@@ -111,21 +124,38 @@ export default {
 					{{ this.userData.userChannels[findChannel(currentChannelId)].title }}
 				</h3>
 				<ul class="chat__messages">
-					<li class="chat__message" v-for="(message, index) in this.userData.userChannels[
-						findChannel(currentChannelId)
-					].messages" :key="index">
-						{{ message.sender }}:&nbsp;{{ message.message }}
+					<li
+						class="chat__message"
+						v-for="(message, index) in this.userData.userChannels[
+							findChannel(currentChannelId)
+						].messages"
+						:key="index"
+					>
+						{{ message.sender }}:&nbsp;{{ message.text }}
 					</li>
 				</ul>
 				<div class="chat__dispatch">
-					<input class="chat__input" v-model="newMessage" placeholder="Напишите сообщение..." />
-					<img src="/send-message.png" class="chat__confirm-button" @click="sendMessage()" />
+					<input
+						class="chat__input"
+						v-model="newMessage"
+						placeholder="Напишите сообщение..."
+					/>
+					<img
+						src="/send-message.png"
+						class="chat__confirm-button"
+						@click="sendMessage()"
+					/>
 				</div>
 			</div>
 		</div>
 	</div>
-	<!-- <AdminPanel v-if="chatIsOpen" :users="userData.adminData.users" :channels="userData.adminData.allChannels" :active="active"
-		@click="active = !active" /> -->
+	<AdminPanel
+		v-if="userDataLoaded && userData.isAdmin"
+		:users="userData.adminData === undefined ? [] : userData.adminData.users"
+		:channels="userData.adminData === undefined ? [] : userData.adminData.allChannels"
+		:active="active"
+		@click="active = !active"
+	/>
 	<!-- <button @click="deleteJWT()">deleteJWT</button> -->
 </template>
 
