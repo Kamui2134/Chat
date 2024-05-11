@@ -52,9 +52,6 @@ export default {
 	created: function () {
 		fetch('http://localhost:8082/chat', {
 			method: 'GET', // *GET, POST, PUT, DELETE, etc.
-			mode: 'no-cors', // no-cors, *cors, same-origin
-			cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-			credentials: 'same-origin', // include, *same-origin, omit
 			headers: {
 				'Content-Type': 'application/json',
 				// 'Content-Type': 'application/x-www-form-urlencoded',
@@ -79,7 +76,7 @@ export default {
 			})
 		console.log('Starting connection')
 		this.chatConnection = new WebSocket(
-			`ws://localhost:8082/chat?${getCookie('jwt')}`
+			`ws://localhost:8082/chat?userId=${getCookie('jwt')}`
 		)
 
 		this.chatConnection.onopen = function (event) {

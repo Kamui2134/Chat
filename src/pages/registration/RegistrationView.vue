@@ -3,9 +3,41 @@ import { setCookie } from '@/scripts/WorkWithCookies.js'
 import router from '@/router/router.js'
 
 export default {
+	data() {
+		return {
+			userName: '',
+			password: '',
+		}
+	},
 	methods: {
 		registration() {
-			setCookie('jwt', "123")
+			fetch('http://localhost:8082/registration', {
+				method: 'POST', // *GET, POST, PUT, DELETE, etc.
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					userName: this.userName,
+					password: this.password,
+				}),
+			}) // Замените URL на ваш адрес сервера
+				.then(response => {
+					if (!response.ok) {
+						// Проверяем, успешно ли выполнен запрос
+						throw new Error('Network response was not ok') // Если запрос не удался, выбрасываем ошибку
+					}
+					return response.json() // Преобразуем ответ в формат JSON
+				})
+				.then(data => {
+					// Обработка пришедших данных
+					console.log('Полученные данные:', data)
+					setCookie('jwt', data)
+				})
+				.catch(error => {
+					// Обработка ошибки
+					console.error('Произошла ошибка при запросе данных:', error)
+					// Дополнительные действия при ошибке...
+				})
 			router.replace({ path: '/' })
 		},
 	},
@@ -18,8 +50,9 @@ export default {
 			<h3></h3>
 			<input
 				class="registration-container__input"
-				type="test"
+				type="text"
 				name="username"
+				v-model="userName"
 				placeholder="Введите имя"
 			/>
 			<h3></h3>
@@ -27,18 +60,18 @@ export default {
 				class="registration-container__input"
 				type="password"
 				name="password"
+				v-model="password"
 				placeholder="Введите пароль"
 			/>
 			<h3></h3>
-			<input
-				class="registration-container__input"
-				type="email"
-				name="email"
-				placeholder="Введите email"
-			/>
 		</div>
 		<div class="checkbox-container">
-			<input class="checkbox-container__checkbox" type="checkbox" name="remember" checked />
+			<input
+				class="checkbox-container__checkbox"
+				type="checkbox"
+				name="remember"
+				checked
+			/>
 			<label class="checkbox-container__label" for="label"
 				>Запомнить меня</label
 			>
