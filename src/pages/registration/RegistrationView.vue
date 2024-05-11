@@ -13,7 +13,7 @@ export default {
 	methods: {
 		async registration() {
 			try {
-				const response = await fetch('http://localhost:8082/registration', {
+				const response = await fetch('http://192.168.137.1:8082/registration', {
 					method: 'POST', // *GET, POST, PUT, DELETE, etc.
 					headers: {
 						'Content-Type': 'application/json',

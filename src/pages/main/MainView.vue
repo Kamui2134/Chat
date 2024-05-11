@@ -50,7 +50,7 @@ export default {
 		AdminPanel,
 	},
 	created: function () {
-		fetch('http://localhost:8082/chat', {
+		fetch('http://192.168.137.1:8082/chat', {
 			method: 'GET', // *GET, POST, PUT, DELETE, etc.
 			headers: {
 				'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ export default {
 			})
 		console.log('Starting connection')
 		this.chatConnection = new WebSocket(
-			`ws://localhost:8082/chat?userId=${getCookie('jwt')}`
+			`ws://192.168.137.1:8082/chat?userId=${getCookie('jwt')}`
 		)
 
 		this.chatConnection.onopen = function (event) {
