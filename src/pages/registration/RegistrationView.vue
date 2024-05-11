@@ -7,6 +7,7 @@ export default {
 		return {
 			userName: '',
 			password: '',
+			error: '',
 		}
 	},
 	methods: {
@@ -31,7 +32,12 @@ export default {
 				.then(data => {
 					// Обработка пришедших данных
 					console.log('Полученные данные:', data)
-					setCookie('jwt', data)
+					if (data.error === undefined) {
+						setCookie('jwt', data)
+					} else {
+						this.error=data.error
+						alert(this.error)
+					}
 				})
 				.catch(error => {
 					// Обработка ошибки
