@@ -11,7 +11,6 @@ export default {
 			newMessage: '',
 			active: false,
 			chatConnection: null,
-			adminConnection: null,
 		}
 	},
 	methods: {
