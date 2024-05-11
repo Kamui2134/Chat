@@ -10,12 +10,11 @@ export default defineConfig({
 		vue({
 			template: {
 				compilerOptions: {
-					isCustomElement: tag => {
+					isCustomElement: (tag) => {
 						return tag.startsWith('ion-') // (return true)
-					},
+					}
 				},
-			},
-		}),
+			}}),
 		vueJsx(),
 	],
 	resolve: {

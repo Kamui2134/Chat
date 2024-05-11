@@ -28,7 +28,7 @@ export default {
 				// Обработка пришедших данных
 				console.log('Полученные данные:', data)
 				if (data.error === undefined) {
-					setCookie('jwt', data)
+					setCookie('jwt', data.userId)
 					router.replace({ path: '/' })
 				} else {
 					this.error = data.error
