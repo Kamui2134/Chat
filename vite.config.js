@@ -6,15 +6,19 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+	devServer: {
+		webSocketServer: false,
+	},
 	plugins: [
 		vue({
 			template: {
 				compilerOptions: {
-					isCustomElement: (tag) => {
+					isCustomElement: tag => {
 						return tag.startsWith('ion-') // (return true)
-					}
+					},
 				},
-			}}),
+			},
+		}),
 		vueJsx(),
 	],
 	resolve: {
