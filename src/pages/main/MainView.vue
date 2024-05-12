@@ -38,6 +38,7 @@ export default {
 			for (var i = 0; i < this.userData.userChannels.length; i++) {
 				if (this.userData.userChannels[i].id === id) {
 					return i // Возвращаем индекс элемента, если его id равен заданному id
+					return i // Возвращаем индекс элемента, если его id равен заданному id
 				}
 			}
 		},
@@ -110,10 +111,22 @@ export default {
 		v-if="userData.isAdmin === true"
 		@click="this.active = !this.active"
 	>
+	<button
+		class="admin-button"
+		v-if="userData.isAdmin === true"
+		@click="this.active = !this.active"
+	>
 		<h3 class="admin-button__text">быть админом</h3>
 	</button>
 	<div class="main-container" v-if="userDataLoaded">
+	<div class="main-container" v-if="userDataLoaded">
 		<ul class="main-container__channels">
+			<li
+				class="main-container__channel"
+				v-for="channel in this.userData.userChannels"
+				:key="channel.id"
+				@click="openChannel(channel.id)"
+			>
 			<li
 				class="main-container__channel"
 				v-for="channel in this.userData.userChannels"
@@ -137,9 +150,27 @@ export default {
 						:key="index"
 					>
 						{{ message.sender }}:&nbsp;{{ message.text }}
+					<li
+						class="chat__message"
+						v-for="(message, index) in this.userData.userChannels[
+							findChannel(currentChannelId)
+						].messages"
+						:key="index"
+					>
+						{{ message.sender }}:&nbsp;{{ message.text }}
 					</li>
 				</ul>
 				<div class="chat__dispatch">
+					<input
+						class="chat__input"
+						v-model="newMessage"
+						placeholder="Напишите сообщение..."
+					/>
+					<img
+						src="/send-message.png"
+						class="chat__confirm-button"
+						@click="sendMessage()"
+					/>
 					<input
 						class="chat__input"
 						v-model="newMessage"
