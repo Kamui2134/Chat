@@ -111,22 +111,10 @@ export default {
 		v-if="userData.isAdmin === true"
 		@click="this.active = !this.active"
 	>
-	<button
-		class="admin-button"
-		v-if="userData.isAdmin === true"
-		@click="this.active = !this.active"
-	>
 		<h3 class="admin-button__text">быть админом</h3>
 	</button>
 	<div class="main-container" v-if="userDataLoaded">
-	<div class="main-container" v-if="userDataLoaded">
 		<ul class="main-container__channels">
-			<li
-				class="main-container__channel"
-				v-for="channel in this.userData.userChannels"
-				:key="channel.id"
-				@click="openChannel(channel.id)"
-			>
 			<li
 				class="main-container__channel"
 				v-for="channel in this.userData.userChannels"
@@ -142,14 +130,6 @@ export default {
 					{{ this.userData.userChannels[findChannel(currentChannelId)].title }}
 				</h3>
 				<ul class="chat__messages">
-					<li
-						class="chat__message"
-						v-for="(message, index) in this.userData.userChannels[
-							findChannel(currentChannelId)
-						].messages"
-						:key="index"
-					>
-						{{ message.sender }}:&nbsp;{{ message.text }}
 					<li
 						class="chat__message"
 						v-for="(message, index) in this.userData.userChannels[
