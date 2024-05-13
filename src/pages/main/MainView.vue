@@ -92,10 +92,9 @@ export default {
 		}
 		this.chatConnection.onmessage = function (event) {
 			console.log("gg")
-			console.log(event)
 			const data = JSON.parse(event.data)
-			//console.log(data)
-			self.userData.userChannels[self.findChannel(data.channelId)].messages.push({sender: data.sender, text: data.text}) 
+			console.log(data)
+			this.userData.userChannels[findChannel(data.channelId)].messages.push({sender: data.sender, text: data.text}) 
 		}
 		this.chatConnection.onclose = function (error) {
 			console.log(
