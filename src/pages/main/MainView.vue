@@ -20,12 +20,95 @@ export default {
 			if (this.newMessage === '') {
 				return
 			}
-			this.chatConnection.send(JSON.stringify({
-				text: this.newMessage,
-				channelId: this.currentChannelId,
-				senderId: this.userId,
-			}))
+			this.chatConnection.send(
+				JSON.stringify({
+					flag: 'FORWARD_MESSAGE',
+					text: this.newMessage,
+					channelId: this.currentChannelId,
+					senderId: this.userId,
+				})
+			)
 			this.newMessage = ''
+		},
+		forwardMessage(data) {
+			data.channelId = Number(data.channelId)
+
+			this.userData.userChannels[
+				this.findById(this.userData.userChannels, data.channelId)
+			].messages.push({ sender: data.sender, text: data.text })
+		},
+		deleteUserFromChannel(data) {
+			if (this.userData.isAdmin === true) {
+				this.userData.adminData.allUsers[
+					this.findById(this.userData.adminData.allUsers, data.userId)
+				].channels.splice(
+					this.findById(
+						this.userData.adminData.allUsers[
+							this.findById(this.userData.adminData.allUsers, data.userId)
+						].channels,
+						data.channelId
+					),
+					1
+				)
+				return
+			}
+			if (this.currentChannelId === data.channelId) {
+				this.currentChannelId = 0
+				this.chatIsOpen = false
+			}
+			this.userData.userChannels.splice(
+				this.findById(this.userData.userChannels, data.channelId),
+				1
+			)
+		},
+		addUserToChannel(data) {
+			if (this.userData.isAdmin === true) {
+				this.userData.adminData.allUsers[
+					this.findById(this.userData.adminData.allUsers, data.userId)
+				].channels.push(
+					this.userData.adminData.allChannels[
+						this.findById(this.userData.adminData.allChannels, data.channelId)
+					]
+				)
+				return
+			}
+			this.userData.userChannels.push({
+				id: data.id,
+				title: data.title,
+				messages: data.messages,
+			})
+		},
+		deleteChannel(data) {
+			if (this.userData.isAdmin === true && data.userIds != undefined) {
+				for (let i = 0; i < data.userIds.length; i++) {
+					this.userData.adminData.allUsers[
+						this.findById(this.userData.adminData.allUsers, data.userIds[i])
+					].channels.splice(
+						this.findById(
+							this.userData.adminData.allUsers[
+								this.findById(this.userData.adminData.allUsers, data.userIds[i])
+							].channels
+						, data.channelId),
+						1
+					)
+				}
+				return
+			}
+			if (this.currentChannelId === data.channelId) {
+				this.currentChannelId = 0
+				this.chatIsOpen = false
+			}
+			this.userData.userChannels.splice(
+				this.findById(this.userData.userChannels, data.channelId),
+				1
+			)
+		},
+		createChannel(data) {
+			this.userData.userChannels.push({id: data.channelId, title: data.title, messages: []})
+			this.userData.adminData.allChannels.push({
+				id: data.channelId,
+				title: data.title,
+			})
 		},
 		deleteJWT() {
 			deleteCookie('jwt')
@@ -34,10 +117,9 @@ export default {
 			this.chatIsOpen = true
 			this.currentChannelId = id
 		},
-		findChannel(id) {
-			for (var i = 0; i < this.userData.userChannels.length; i++) {
-				if (this.userData.userChannels[i].id === id) {
-					return i // Возвращаем индекс элемента, если его id равен заданному id
+		findById(array, id) {
+			for (var i = 0; i < array.length; i++) {
+				if (array[i].id === id) {
 					return i // Возвращаем индекс элемента, если его id равен заданному id
 				}
 			}
@@ -70,12 +152,8 @@ export default {
 				// Обработка пришедших данных
 				console.log('Полученные данные:', data)
 				this.userData = data
-				if (this.userData.isAdmin === "true") {
-					this.userData.isAdmin = true
-				} else {
-					this.userData.isAdmin = false
-				}
-				this.userDataLoaded = true	
+				console.log(this.userData)
+				this.userDataLoaded = true
 			})
 			.catch(error => {
 				// Обработка ошибки
@@ -91,10 +169,27 @@ export default {
 			console.log('Successfully connected (chatConnection)')
 		}
 		this.chatConnection.onmessage = function (event) {
-			console.log("gg")
+			console.log('gg')
+
 			const data = JSON.parse(event.data)
 			console.log(data)
-			self.userData.userChannels[self.findChannel(data.channelId)].messages.push({sender: data.sender, text: data.text}) 
+			switch (data.flag) {
+				case 'FORWARD_MESSAGE':
+					self.forwardMessage(data)
+					break
+				case 'DELETE_USER_FROM_CHANNEL':
+					self.deleteUserFromChannel(data)
+					break
+				case 'ADD_USER_TO_CHANNEL':
+					self.addUserToChannel(data)
+					break
+				case 'DELETE_CHANNEL':
+					self.deleteChannel(data)
+					break
+				case 'CREATE_CHANNEL':
+					self.createChannel(data)
+					break
+			}
 		}
 		this.chatConnection.onclose = function (error) {
 			console.log(
@@ -131,13 +226,17 @@ export default {
 		<div class="main-container__chat-container">
 			<div v-if="chatIsOpen" class="chat">
 				<h3 class="chat__title">
-					{{ this.userData.userChannels[findChannel(currentChannelId)].title }}
+					{{
+						this.userData.userChannels[
+							findById(this.userData.userChannels, currentChannelId)
+						].title
+					}}
 				</h3>
 				<ul class="chat__messages">
 					<li
 						class="chat__message"
 						v-for="(message, index) in this.userData.userChannels[
-							findChannel(currentChannelId)
+							findById(this.userData.userChannels, currentChannelId)
 						].messages"
 						:key="index"
 					>
@@ -161,11 +260,12 @@ export default {
 	</div>
 	<AdminPanel
 		v-if="userDataLoaded && userData.isAdmin"
-		:users="userData.adminData === undefined ? [] : userData.adminData.users"
+		:users="userData.adminData === undefined ? [] : userData.adminData.allUsers"
 		:channels="
 			userData.adminData === undefined ? [] : userData.adminData.allChannels
 		"
 		:active="active"
+		:chatConnection="this.chatConnection"
 		@click="active = !active"
 	/>
 	<!-- <button @click="deleteJWT()">deleteJWT</button> -->

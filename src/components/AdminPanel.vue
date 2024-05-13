@@ -22,12 +22,22 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+		chatConnection: {
+			type: Object,
+			required: true,
+		},
 	},
 	methods: {
 		selectUser(index) {
 			this.missingChannels.splice(0, this.missingChannels.length)
 			this.userSelected = true
 			this.currentUserIndex = index
+			if(this.users[this.currentUserIndex].channels.length === 0) {
+				for (let i = 0; i < this.channels.length; i++) {
+					this.missingChannels.push({id: this.channels[i].id})
+				}
+				return 
+			}
 			this.channels.forEach(channel => {
 				for (
 					let i = 0;
@@ -35,43 +45,57 @@ export default {
 					i++
 				) {
 					if (
-						!this.findStringInArray(
+						!this.searchById(
 							this.users[this.currentUserIndex].channels,
-							channel.title
+							channel.id
 						) &&
-						!this.findStringInArray(this.missingChannels, channel.title)
+						!this.searchById(this.missingChannels, channel.id)
 					) {
-						this.missingChannels.push({ title: channel.title })
+						this.missingChannels.push({ id: channel.id })
 					}
 				}
 			})
-		},
-		addUserInChannel(title) {
-			//нужно доделать, когда появится сервак
-			this.users[this.currentUserIndex].channels.push({ title: title })
-			this.missingChannels = this.missingChannels.filter(
-				channel => channel.title !== title
-			)
-		},
-		exitChannel(index) {
-			let channelToBeDeleted = this.users[this.currentUserIndex].channels[index]
-			this.missingChannels.push(channelToBeDeleted)
-			this.users[this.currentUserIndex].channels.splice(index, 1)
 			console.log(this.missingChannels)
 		},
-		deleteChannel(index) { // требуется жёсткая доработка!!!!!!
-			if(!confirm('Вы уверены?')) {
+		deleteUserFromChannel(id) {
+			const channelToBeDeleted = this.users[this.currentUserIndex].channels[this.findIndexById(this.users[this.currentUserIndex].channels, id)]
+			this.missingChannels.push(channelToBeDeleted)
+
+			this.chatConnection.send(JSON.stringify({
+				flag: 'DELETE_USER_FROM_CHANNEL',
+				userId: this.users[this.currentUserIndex].id,
+				channelId: id,
+			}))
+		},
+		addUserToChannel(id) {
+			this.missingChannels = this.missingChannels.filter(
+				channel => channel.id !== id
+			)
+
+			this.chatConnection.send(JSON.stringify({
+				flag: 'ADD_USER_TO_CHANNEL',
+				userId: this.users[this.currentUserIndex].id,
+				channelId: id,
+			}))
+		},
+		deleteChannel(id) {
+			if (!confirm('Вы уверены?')) {
 				return
 			}
-			this.channels.splice(index, 1) 
-			// надо придумать как удалять канал у пользователей
+			this.channels.splice(this.findIndexById(this.channels, id), 1)
+			this.chatConnection.send(JSON.stringify({
+				flag: 'DELETE_CHANNEL',
+				channelId: id,
+			}))
 		},
 		addNewChannel() {
-			if(this.nameOfNewChannel === '') {
+			if (this.nameOfNewChannel === '') {
 				return
 			}
-			this.channels.push({title: this.nameOfNewChannel})
-			this.missingChannels.push({title: this.nameOfNewChannel})
+			this.chatConnection.send(JSON.stringify({
+				flag: 'CREATE_CHANNEL',
+				title: this.nameOfNewChannel
+			}))
 			this.nameOfNewChannel = ''
 		},
 		findStringInArray(array, searchString) {
@@ -82,6 +106,21 @@ export default {
 			}
 			return false
 		},
+		findIndexById(array, id) {
+			for (var i = 0; i < array.length; i++) {
+				if (array[i].id === id) {
+					return i // Возвращаем индекс элемента, если его id равен заданному id
+				}
+			}
+		},
+		searchById(array, id) {
+			for (var i = 0; i < array.length; i++) {
+				if (array[i].id === id) {
+					return true// Возвращаем true, если его id равен заданному id
+				}
+			}
+			return false
+		}
 	},
 }
 </script>
@@ -118,16 +157,16 @@ export default {
 					</div>
 					<ul class="admin-panel__user-channels-list">
 						<li
-							v-for="(userChannel, index) in users[currentUserIndex].channels"
-							:key="index"
+							v-for="(channel) in users[currentUserIndex].channels"
+							:key="channel.id"
 							class="admin-panel__user-channel"
 							v-if="this.userSelected"
 						>
-							{{ userChannel.title }}
+							{{ channel.title }}
 							<img
 								class="admin-panel__cross"
 								src="/cross.png"
-								@click="exitChannel(index)"
+								@click="deleteUserFromChannel(channel.id)"
 							/>
 						</li>
 					</ul>
@@ -139,26 +178,40 @@ export default {
 					<div class="admin-panel__textline"></div>
 				</div>
 				<ul class="admin-panel__channels-list">
-					<li v-for="(channel, index) in channels" class="admin-panel__channel" :key="index">
+					<li
+						v-for="(channel) in channels"
+						class="admin-panel__channel"
+						:key="channel.id"
+					>
 						{{ channel.title }}
 						<img
 							class="admin-panel__trash"
 							src="/trash.png"
-							@click="deleteChannel(index)"
+							@click="deleteChannel(channel.id)"
 						/>
 						<img
 							class="admin-panel__upArrow"
 							src="/upArrow.png"
 							v-if="
-								findStringInArray(missingChannels, channel.title) &&
+								searchById(missingChannels, channel.id) &&
 								userSelected
 							"
-							@click="addUserInChannel(channel.title)"
+							@click="addUserToChannel(channel.id)"
 						/>
 					</li>
 					<div class="admin-panel__add-new-channel-container">
-						<input placeholder="Введите название" class="admin-panel__input" v-model="nameOfNewChannel" maxlength="40"/>
-						<img src="/plus.png" class="admin-panel__plus" @click="addNewChannel()" type="submit" />
+						<input
+							placeholder="Введите название"
+							class="admin-panel__input"
+							v-model="nameOfNewChannel"
+							maxlength="40"
+						/>
+						<img
+							src="/plus.png"
+							class="admin-panel__plus"
+							@click="addNewChannel()"
+							type="submit"
+						/>
 					</div>
 				</ul>
 			</div>
@@ -293,13 +346,13 @@ export default {
 
 .admin-panel__user-channel {
 	font-size: 16px;
-    font-family: Roboto, sans-serif;
-    background: #02c3f4;
-    color: #fff;
-    border-radius: 5px;
-    gap: 4px;
-    padding: 4px 8px;
-	overflow-wrap: break-word;	
+	font-family: Roboto, sans-serif;
+	background: #02c3f4;
+	color: #fff;
+	border-radius: 5px;
+	gap: 4px;
+	padding: 4px 8px;
+	overflow-wrap: break-word;
 	max-width: 100%;
 }
 .admin-panel__cross {
