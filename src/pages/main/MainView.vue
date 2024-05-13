@@ -47,7 +47,7 @@ export default {
 		AdminPanel,
 	},
 	created: function () {
-		console.log('gg wp')
+		const self = this
 		this.userId = getCookie('jwt')
 		fetch('http://192.168.137.1:8082/chat', {
 			method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -70,7 +70,12 @@ export default {
 				// Обработка пришедших данных
 				console.log('Полученные данные:', data)
 				this.userData = data
-				this.userDataLoaded = true
+				if (this.userData.isAdmin === "true") {
+					this.userData.isAdmin = true
+				} else {
+					this.userData.isAdmin = false
+				}
+				this.userDataLoaded = true	
 			})
 			.catch(error => {
 				// Обработка ошибки
@@ -89,8 +94,8 @@ export default {
 			console.log("gg")
 			console.log(event)
 			const data = JSON.parse(event.data)
-			console.log(data)
-			this.userData.userChannels[findChannel(data.channelId)].messages.push({sender: data.sender, text: data.text}) 
+			//console.log(data)
+			self.userData.userChannels[self.findChannel(data.channelId)].messages.push({sender: data.sender, text: data.text}) 
 		}
 		this.chatConnection.onclose = function (error) {
 			console.log(
