@@ -47,7 +47,7 @@ export default {
 		AdminPanel,
 	},
 	created: function () {
-		console.log('gg wp')
+		const self = this
 		this.userId = getCookie('jwt')
 		fetch('http://192.168.137.1:8082/chat', {
 			method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -87,10 +87,8 @@ export default {
 		}
 		this.chatConnection.onmessage = function (event) {
 			console.log("gg")
-			console.log(event)
 			const data = JSON.parse(event.data)
-			console.log(data)
-			this.userData.userChannels[findChannel(data.channelId)].messages.push({sender: data.sender, text: data.text}) 
+			self.userData.userChannels[self.findChannel(data.channelId)].messages.push({sender: data.sender, text: data.text}) 
 		}
 		this.chatConnection.onclose = function (error) {
 			console.log(
