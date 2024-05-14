@@ -26,17 +26,21 @@ export default {
 			type: Object,
 			required: true,
 		},
+		newChannelId: {
+			type: Number,
+			required: true,
+		},
 	},
 	methods: {
 		selectUser(index) {
 			this.missingChannels.splice(0, this.missingChannels.length)
 			this.userSelected = true
 			this.currentUserIndex = index
-			if(this.users[this.currentUserIndex].channels.length === 0) {
+			if (this.users[this.currentUserIndex].channels.length === 0) {
 				for (let i = 0; i < this.channels.length; i++) {
-					this.missingChannels.push({id: this.channels[i].id})
+					this.missingChannels.push({ id: this.channels[i].id })
 				}
-				return 
+				return
 			}
 			this.channels.forEach(channel => {
 				for (
@@ -58,44 +62,55 @@ export default {
 			console.log(this.missingChannels)
 		},
 		deleteUserFromChannel(id) {
-			const channelToBeDeleted = this.users[this.currentUserIndex].channels[this.findIndexById(this.users[this.currentUserIndex].channels, id)]
+			const channelToBeDeleted =
+				this.users[this.currentUserIndex].channels[
+					this.findIndexById(this.users[this.currentUserIndex].channels, id)
+				]
 			this.missingChannels.push(channelToBeDeleted)
 
-			this.chatConnection.send(JSON.stringify({
-				flag: 'DELETE_USER_FROM_CHANNEL',
-				userId: this.users[this.currentUserIndex].id,
-				channelId: id,
-			}))
+			this.chatConnection.send(
+				JSON.stringify({
+					flag: 'DELETE_USER_FROM_CHANNEL',
+					userId: this.users[this.currentUserIndex].id,
+					channelId: id,
+				})
+			)
 		},
 		addUserToChannel(id) {
 			this.missingChannels = this.missingChannels.filter(
 				channel => channel.id !== id
 			)
 
-			this.chatConnection.send(JSON.stringify({
-				flag: 'ADD_USER_TO_CHANNEL',
-				userId: this.users[this.currentUserIndex].id,
-				channelId: id,
-			}))
+			this.chatConnection.send(
+				JSON.stringify({
+					flag: 'ADD_USER_TO_CHANNEL',
+					userId: this.users[this.currentUserIndex].id,
+					channelId: id,
+				})
+			)
 		},
 		deleteChannel(id) {
 			if (!confirm('Вы уверены?')) {
 				return
 			}
 			this.channels.splice(this.findIndexById(this.channels, id), 1)
-			this.chatConnection.send(JSON.stringify({
-				flag: 'DELETE_CHANNEL',
-				channelId: id,
-			}))
+			this.chatConnection.send(
+				JSON.stringify({
+					flag: 'DELETE_CHANNEL',
+					channelId: id,
+				})
+			)
 		},
 		addNewChannel() {
 			if (this.nameOfNewChannel === '') {
 				return
 			}
-			this.chatConnection.send(JSON.stringify({
-				flag: 'CREATE_CHANNEL',
-				title: this.nameOfNewChannel
-			}))
+			this.chatConnection.send(
+				JSON.stringify({
+					flag: 'CREATE_CHANNEL',
+					title: this.nameOfNewChannel,
+				})
+			)
 			this.nameOfNewChannel = ''
 		},
 		findStringInArray(array, searchString) {
@@ -116,11 +131,16 @@ export default {
 		searchById(array, id) {
 			for (var i = 0; i < array.length; i++) {
 				if (array[i].id === id) {
-					return true// Возвращаем true, если его id равен заданному id
+					return true // Возвращаем true, если его id равен заданному id
 				}
 			}
 			return false
-		}
+		},
+	},
+	watch: {
+		newChannelId(newValue, oldValue) {
+			this.missingChannels.push({id: newValue})
+		},
 	},
 }
 </script>
@@ -157,7 +177,7 @@ export default {
 					</div>
 					<ul class="admin-panel__user-channels-list">
 						<li
-							v-for="(channel) in users[currentUserIndex].channels"
+							v-for="channel in users[currentUserIndex].channels"
 							:key="channel.id"
 							class="admin-panel__user-channel"
 							v-if="this.userSelected"
@@ -179,7 +199,7 @@ export default {
 				</div>
 				<ul class="admin-panel__channels-list">
 					<li
-						v-for="(channel) in channels"
+						v-for="channel in channels"
 						class="admin-panel__channel"
 						:key="channel.id"
 					>
@@ -192,10 +212,7 @@ export default {
 						<img
 							class="admin-panel__upArrow"
 							src="/upArrow.png"
-							v-if="
-								searchById(missingChannels, channel.id) &&
-								userSelected
-							"
+							v-if="searchById(missingChannels, channel.id) && userSelected"
 							@click="addUserToChannel(channel.id)"
 						/>
 					</li>

@@ -1,6 +1,7 @@
 <script>
 import { deleteCookie, getCookie } from '@/scripts/WorkWithCookies.js'
 import AdminPanel from '@/components/AdminPanel.vue'
+import router from '@/router/router'
 
 export default {
 	data() {
@@ -13,6 +14,7 @@ export default {
 			chatConnection: null,
 			userDataLoaded: false,
 			userId: '',
+			newChannelId: null,
 		}
 	},
 	methods: {
@@ -32,7 +34,6 @@ export default {
 		},
 		forwardMessage(data) {
 			data.channelId = Number(data.channelId)
-
 			this.userData.userChannels[
 				this.findById(this.userData.userChannels, data.channelId)
 			].messages.push({ sender: data.sender, text: data.text })
@@ -87,8 +88,9 @@ export default {
 						this.findById(
 							this.userData.adminData.allUsers[
 								this.findById(this.userData.adminData.allUsers, data.userIds[i])
-							].channels
-						, data.channelId),
+							].channels,
+							data.channelId
+						),
 						1
 					)
 				}
@@ -104,14 +106,20 @@ export default {
 			)
 		},
 		createChannel(data) {
-			this.userData.userChannels.push({id: data.channelId, title: data.title, messages: []})
+			this.userData.userChannels.push({
+				id: data.channelId,
+				title: data.title,
+				messages: [],
+			})
 			this.userData.adminData.allChannels.push({
 				id: data.channelId,
 				title: data.title,
 			})
+			this.newChannelId = data.channelId
 		},
-		deleteJWT() {
+		exitFromAccount() {
 			deleteCookie('jwt')
+			router.replace({ path: '/authorization' })
 		},
 		openChannel(id) {
 			this.chatIsOpen = true
@@ -132,10 +140,9 @@ export default {
 		const self = this
 		this.userId = getCookie('jwt')
 		fetch('http://192.168.137.1:8082/chat', {
-			method: 'POST', // *GET, POST, PUT, DELETE, etc.
+			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				// 'Content-Type': 'application/x-www-form-urlencoded',
 			},
 			body: JSON.stringify({
 				userId: this.userId,
@@ -169,7 +176,7 @@ export default {
 			console.log('Successfully connected (chatConnection)')
 		}
 		this.chatConnection.onmessage = function (event) {
-			console.log('gg')
+			console.log('Пришло сообщение от WebSocket')
 
 			const data = JSON.parse(event.data)
 			console.log(data)
@@ -212,6 +219,7 @@ export default {
 	>
 		<h3 class="admin-button__text">быть админом</h3>
 	</button>
+	<button class="exit-button" @click="exitFromAccount()">EXIT</button>
 	<div class="main-container" v-if="userDataLoaded">
 		<ul class="main-container__channels">
 			<li
@@ -247,6 +255,7 @@ export default {
 					<input
 						class="chat__input"
 						v-model="newMessage"
+						@keyup.enter="sendMessage()"
 						placeholder="Напишите сообщение..."
 					/>
 					<img
@@ -266,9 +275,9 @@ export default {
 		"
 		:active="active"
 		:chatConnection="this.chatConnection"
+		:newChannelId="this.newChannelId"
 		@click="active = !active"
 	/>
-	<!-- <button @click="deleteJWT()">deleteJWT</button> -->
 </template>
 
 <style>
@@ -431,5 +440,26 @@ export default {
 	100% {
 		background-position: right;
 	}
+}
+
+.exit-button {
+	position: absolute;
+	top: 15px;
+	left: 20px;
+	background: #fff;
+	padding: 4px 8px;
+	border-radius: 5px;
+	border: 0;
+	cursor: pointer;
+	transition: transform 0.5s ease;
+	text-transform: uppercase;
+	font-family: Roboto, serif;
+	font-weight: 600;
+	font-size: 16px;
+	color: #283747;
+}
+
+.exit-button:hover {
+	transform: scale(1.1);
 }
 </style>

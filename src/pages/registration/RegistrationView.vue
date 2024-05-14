@@ -9,11 +9,16 @@ export default {
 			userName: '',
 			password: '',
 			error: '',
+			rememberMe: false,
 		}
 	},
 	methods: {
 		async registration() {
 			try {
+				if (this.userName === '' || this.password === '') {
+					alert('Заполните все поля')
+					return
+				}
 				const response = await fetch('http://192.168.137.1:8082/registration', {
 					method: 'POST',
 					headers: {
@@ -30,6 +35,17 @@ export default {
 				console.log('Полученные данные:', data)
 				if (data.error === undefined) {
 					setCookie('jwt', data.userId)
+					if (this.rememberMe) {
+						localStorage.setItem(
+							'rememberMe',
+							JSON.stringify({
+								userName: this.userName,
+								password: this.password,
+							})
+						)
+					} else {
+						localStorage.removeItem('rememberMe')
+					}
 					router.replace({ path: '/' })
 				} else {
 					this.error = data.error
@@ -69,7 +85,7 @@ export default {
 				class="checkbox-container__checkbox"
 				type="checkbox"
 				name="remember"
-				checked
+				v-model="rememberMe"
 			/>
 			<label class="checkbox-container__label" for="label"
 				>Запомнить меня</label

@@ -8,11 +8,16 @@ export default {
 			userName: '',
 			password: '',
 			error: '',
+			rememberMe: false,
 		}
 	},
 	methods: {
 		async authorization() {
 			try {
+				if (this.userName === '' || this.password === '') {
+					alert('Заполните все поля')
+					return
+				}
 				const response = await fetch(
 					'http://192.168.137.1:8082/authorization',
 					{
@@ -31,6 +36,17 @@ export default {
 				console.log('Полученные данные:', data)
 				if (data.error === undefined) {
 					setCookie('jwt', data.userId)
+					if (this.rememberMe) {
+						localStorage.setItem(
+							'rememberMe',
+							JSON.stringify({
+								userName: this.userName,
+								password: this.password,
+							})
+						)
+					} else {
+						localStorage.removeItem('rememberMe')
+					}
 					router.replace({ path: '/' })
 				} else {
 					this.error = data.error
@@ -40,6 +56,16 @@ export default {
 				console.log(error)
 			}
 		},
+	},
+	mounted() {
+		// При загрузке компонента проверяем сохраненное значение
+		const rememberMeJSON = localStorage.getItem('rememberMe')
+		const rememberMe = JSON.parse(rememberMeJSON)
+		if (rememberMe !== null) {
+			this.userName = rememberMe.userName
+			this.password = rememberMe.password
+			this.rememberMe = true
+		}
 	},
 }
 </script>
@@ -70,7 +96,7 @@ export default {
 				class="checkbox-container__checkbox"
 				type="checkbox"
 				name="remember"
-				checked
+				v-model="rememberMe"
 			/>
 			<label class="checkbox-container__label" for="label"
 				>Запомнить меня</label
