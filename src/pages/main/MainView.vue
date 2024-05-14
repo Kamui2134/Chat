@@ -14,7 +14,7 @@ export default {
 			chatConnection: null,
 			userDataLoaded: false,
 			userId: '',
-			newChannelId: null,
+			newChannelId: 0,
 		}
 	},
 	methods: {
@@ -37,6 +37,12 @@ export default {
 			this.userData.userChannels[
 				this.findById(this.userData.userChannels, data.channelId)
 			].messages.push({ sender: data.sender, text: data.text })
+			console.log(data)
+			console.log(
+				this.userData.userChannels[
+					this.findById(this.userData.userChannels, data.channelId)
+				].messages
+			)
 		},
 		deleteUserFromChannel(data) {
 			if (this.userData.isAdmin === true) {
@@ -219,7 +225,7 @@ export default {
 	>
 		<h3 class="admin-button__text">быть админом</h3>
 	</button>
-	<button class="exit-button" @click="exitFromAccount()">EXIT</button>
+	<button class="exit-button" @click="exitFromAccount()">Выход</button>
 	<div class="main-container" v-if="userDataLoaded">
 		<ul class="main-container__channels">
 			<li
@@ -447,7 +453,7 @@ export default {
 	top: 15px;
 	left: 20px;
 	background: #fff;
-	padding: 4px 8px;
+	padding: 1px 8px;
 	border-radius: 5px;
 	border: 0;
 	cursor: pointer;
